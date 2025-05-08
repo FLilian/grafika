@@ -1,0 +1,75 @@
+import numpy as np
+import os
+from PIL import Image
+
+# Ajtó alap paraméterei
+door_width = 1.9  # ajtó szélessége (méter)
+door_height = 3.9  # ajtó magassága (méter)
+door_thickness = 0.05  # ajtó vastagsága (méter)
+frame_thickness = 0.1  # keret vastagsága (méter)
+recess_depth = 0.02  # mélyedés mélysége (méter)
+
+# Kilincs paraméterei
+handle_radius = 0.05  # kilincs sugara (méter)
+handle_height = 0.15  # kilincs hossza (méter)
+handle_position = (door_width - 0.3, door_height / 2)  # kilincs elhelyezkedése (ajtó széle, magasság)
+
+# Segédfüggvények a koordináták előállításához
+def create_door_image():
+    image_width = 300
+    image_height = 600
+    
+    # Kép létrehozása (fehér háttér)
+    door_image = np.ones((image_height, image_width, 3), dtype=np.uint8) * 255  # Fehér háttér
+    
+    # Ajtó színének beállítása (tölgyfa szín)
+    door_color = [139, 69, 19]  # Tölgyfa szín
+    
+    # Ajtó elhelyezése a képen
+    door_left = 15
+    door_top = 15
+    door_right = int(door_width * 150)  # Méretarányos szorzás
+    door_bottom = int(door_height * 150)
+    
+    door_image[door_top:door_bottom, door_left:door_right] = door_color  # Ajtó színezése
+    
+    # Keret színének beállítása
+    frame_color = [0, 0, 0]  # Fekete keret
+
+    
+    # Keret elhelyezése
+    frame_left = door_left - int(frame_thickness * 150)  # A keret bal oldala
+    frame_top = door_top - int(frame_thickness * 150)   # A keret teteje
+    frame_right = door_right + int(frame_thickness * 150)  # A keret jobb oldala
+    frame_bottom = door_bottom + int(frame_thickness * 150)  # A keret alsó oldala
+
+    # Felső keret
+    door_image[frame_top:frame_top + int(frame_thickness * 150), frame_left:frame_right] = frame_color
+
+    # Alsó keret
+    door_image[frame_bottom - int(frame_thickness * 150):frame_bottom, frame_left:frame_right] = frame_color
+
+    # Bal keret
+    door_image[frame_top:frame_bottom, frame_left:frame_left + int(frame_thickness * 150)] = frame_color
+
+    # Jobb keret
+    door_image[frame_top:frame_bottom, frame_right - int(frame_thickness * 150):frame_right] = frame_color
+
+    # Kilincs színének beállítása (fém szín)
+    handle_color = [192, 192, 192]  # Fém szín
+    
+    # Kilincs elhelyezése a képen (méretezve)
+    handle_left = int(door_left + (handle_position[0] * 150))  # Kilincs bal oldala
+    handle_top = int(door_top + (door_height / 2 - handle_height / 2) * 150)  # Kilincs a középen
+    handle_right = handle_left + int(handle_radius * 150 * 2)  # Sugár átmérője
+    handle_bottom = handle_top + int(handle_height * 150)
+    
+    door_image[handle_top:handle_bottom, handle_left:handle_right] = handle_color  # Kilincs színezése
+    
+    # Kép mentése BMP formátumban
+    img = Image.fromarray(door_image)
+    img.save("door.bmp")
+    img.save("door.png", "PNG")
+    print("BMP fájl mentve: door.bmp")
+
+create_door_image()

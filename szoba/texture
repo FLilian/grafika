@@ -1,0 +1,12 @@
+from PIL import Image, ImageDraw
+import random
+
+img = Image.new("RGB", (256, 256), (139, 69, 19))  # barna háttér
+draw = ImageDraw.Draw(img)
+
+# "erezet" hatás
+for i in range(0, 256, 4):
+    offset = random.randint(-2, 2)
+    draw.line([(i + offset, 0), (i, 255)], fill=(160, 82, 45), width=1)
+
+img.save("wood.bmp")
